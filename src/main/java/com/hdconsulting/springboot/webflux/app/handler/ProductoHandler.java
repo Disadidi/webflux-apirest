@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import static org.springframework.web.reactive.function.BodyInserters.*;
 import org.springframework.web.reactive.function.server.ServerRequest;
@@ -74,4 +75,13 @@ public class ProductoHandler {
 				.switchIfEmpty(ServerResponse.notFound().build());
 		
 	}
+	
+	public Mono<ServerResponse> eliminar(ServerRequest request){
+		String id = request.pathVariable("id");
+		
+		return service.findById(id).flatMap(p ->
+			service.delete(p).then(ServerResponse.noContent().build()))
+				.switchIfEmpty(ServerResponse.notFound().build());
+	}
+
 }

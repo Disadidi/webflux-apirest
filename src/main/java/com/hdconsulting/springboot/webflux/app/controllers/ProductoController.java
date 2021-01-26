@@ -105,7 +105,7 @@ public class ProductoController {
 				
 	}
 	
-	@PostMapping	
+	@PostMapping
 	public Mono<ResponseEntity<Map<String, Object>>> crear(@Valid @RequestBody Mono<Producto> monoProducto){
 		
 		Map<String, Object> respuesta = new HashMap<>();
