@@ -69,7 +69,7 @@ public class ProductoServiceImpl implements ProductoService {
 	}
 
 	@Override
-	public Mono<Producto> buscarPorNombre(String nombre) {
+	public Mono<Producto> findByNombre(String nombre) {
 		
 		return dao.findByNombre(nombre);
 	}

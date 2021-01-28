@@ -99,6 +99,28 @@ class SpringBootWebfluxApirestApplicationTests {
 			Assertions.assertThat(p.getCategoria().getNombre()).isEqualTo("Meubles");
 		});
 	}
+	
+	@Test
+	void editarTest() {
+		Producto producto = service.findByNombre("Sony Notebook").block();
+		Categoria categoria = service.findCategoriaById("Electronico").block();
+		
+		Producto productoEditado = new Producto("Asus Notebook", 700.00, categoria);
+		
+		client.put().uri("/api/v2/productos{id}", Collections.singletonMap("id", producto.getId()))
+		.contentType(MediaType.APPLICATION_JSON)
+		.accept(MediaType.APPLICATION_JSON)
+		.body(Mono.just(productoEditado), Producto.class)
+		.exchange()
+		.expectStatus().isCreated()
+		.expectHeader().contentType(MediaType.APPLICATION_JSON)
+		.expectBody(Producto.class)
+		.consumeWith(response -> {
+			Producto p = response.getResponseBody();
+			
+			Assertions.assertThat(p.getId()).isNotEmpty();
+		})
+	}
 		
 
 }
