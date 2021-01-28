@@ -4,9 +4,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
-import org.hamcrest.core.IsEqual;
-import org.hamcrest.text.IsEmptyString;
-import org.hamcrest.text.IsEqualIgnoringCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +53,7 @@ class SpringBootWebfluxApirestApplicationTests {
 	void verTest() {
 		
 		String nombre = "Sony Camara HD Digital";
-		Producto producto = service.buscarPorNombre(nombre).block();
+		Producto producto = service.findByNombre(nombre).block();
 		
 		client.get()
 		.uri("/api/v2/productos", Collections.singletonMap("id", producto.getId()))
@@ -104,8 +101,8 @@ class SpringBootWebfluxApirestApplicationTests {
 	void editarTest() {
 		Producto producto = service.findByNombre("Sony Notebook").block();
 		Categoria categoria = service.findCategoriaById("Electronico").block();
-		
-		Producto productoEditado = new Producto("Asus Notebook", 700.00, categoria);
+		String productoNombre = "Asus Notebook";
+		Producto productoEditado = new Producto(productoNombre, 700.00, categoria);
 		
 		client.put().uri("/api/v2/productos{id}", Collections.singletonMap("id", producto.getId()))
 		.contentType(MediaType.APPLICATION_JSON)
@@ -119,7 +116,27 @@ class SpringBootWebfluxApirestApplicationTests {
 			Producto p = response.getResponseBody();
 			
 			Assertions.assertThat(p.getId()).isNotEmpty();
-		})
+			Assertions.assertThat(p.getNombre()).isEqualTo(productoNombre);
+			
+		});
+	}
+	
+	@Test
+	void eliminarTest() {
+		Producto producto = service.findByNombre("Sony Camara HD Digital").block();
+		
+		client.delete()
+		.uri("/api/v2/productos{id}", Collections.singletonMap("id", producto.getId()))
+		.exchange()
+		.expectStatus().isNoContent()
+		.expectBody().isEmpty();
+		
+		client.get()
+		.uri("/api/v2/productos{id}", Collections.singletonMap("id", producto.getId()))
+		.exchange()
+		.expectStatus().isNotFound()
+		.expectBody().isEmpty();
+		
 	}
 		
 
