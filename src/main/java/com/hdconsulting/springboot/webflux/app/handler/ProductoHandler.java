@@ -126,7 +126,7 @@ public class ProductoHandler {
 				}
 				return service.save(p).flatMap(pdb -> ServerResponse
 						.created(URI.create("/api/v2/productos/".concat(pdb.getId())))
-						.contentType(MediaType.APPLICATION_JSON_UTF8)
+						.contentType(MediaType.APPLICATION_JSON)
 						.body(fromObject(pdb)));
 			}
 			

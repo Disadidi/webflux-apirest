@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureWebClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
@@ -22,8 +23,9 @@ import com.hdconsulting.springboot.webflux.app.models.services.ProductoService;
 
 import reactor.core.publisher.Mono;
 
+@AutoConfigureWebClient
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 class SpringBootWebfluxApirestApplicationTests {
 	
 	@Autowired
@@ -103,9 +105,30 @@ class SpringBootWebfluxApirestApplicationTests {
 			Assertions.assertThat(p.getCategoria().getNombre()).isEqualTo("Meubles");
 		});
 	}
+	@Test
+	public void editarTest() {
+		
+		Producto producto = service.findByNombre("Sony Notebook").block();
+		Categoria categoria = service.findCategoriaByNombre("Electrónico").block();
+		
+		Producto productoEditado = new Producto("Asus Notebook", 700.00, categoria);
+		
+		client.put().uri(url + "/{id}", Collections.singletonMap("id", producto.getId()))
+		.contentType(MediaType.APPLICATION_JSON)
+		.accept(MediaType.APPLICATION_JSON)
+		.body(Mono.just(productoEditado), Producto.class)
+		.exchange()
+		.expectStatus().isCreated()
+		.expectHeader().contentType(MediaType.APPLICATION_JSON)
+		.expectBody()
+		.jsonPath("$.id").isNotEmpty()
+		.jsonPath("$.nombre").isEqualTo("Asus Notebook")
+		.jsonPath("$.categoria.nombre").isEqualTo("Electrónico");
+		
+	}
 	
 	@Test
-	void editarTest() {
+	void editar2Test() {
 		Producto producto = service.findByNombre("Sony Notebook").block();
 		Categoria categoria = service.findCategoriaById("Electronico").block();
 		String productoNombre = "Asus Notebook";
