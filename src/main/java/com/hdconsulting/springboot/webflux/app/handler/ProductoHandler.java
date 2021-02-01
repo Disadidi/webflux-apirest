@@ -1,27 +1,20 @@
 package com.hdconsulting.springboot.webflux.app.handler;
 
+import static org.springframework.web.reactive.function.BodyInserters.fromObject;
+
 import java.net.URI;
 import java.util.Date;
-import java.util.UUID;
-
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.codec.multipart.FilePart;
-import org.springframework.http.codec.multipart.FormFieldPart;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-
-import static org.springframework.web.reactive.function.BodyInserters.*;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
-import com.hdconsulting.springboot.webflux.app.models.documents.Categoria;
 import com.hdconsulting.springboot.webflux.app.models.documents.Producto;
 import com.hdconsulting.springboot.webflux.app.models.services.ProductoService;
 
