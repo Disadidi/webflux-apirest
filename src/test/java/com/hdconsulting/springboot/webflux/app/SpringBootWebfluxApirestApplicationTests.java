@@ -83,6 +83,26 @@ class SpringBootWebfluxApirestApplicationTests {
 	}
 	
 	@Test
+	public void crearTest() {
+		
+		Categoria categoria = service.findCategoriaByNombre("Muebles").block();
+		
+		Producto producto = new Producto("Mesa comedor", 100.00, categoria);
+		
+		client.post().uri(url)
+		.contentType(MediaType.APPLICATION_JSON)
+		.accept(MediaType.APPLICATION_JSON)
+		.body(Mono.just(producto), Producto.class)
+		.exchange()
+		.expectStatus().isCreated()
+		.expectHeader().contentType(MediaType.APPLICATION_JSON)
+		.expectBody()
+		.jsonPath("$.producto.id").isNotEmpty()
+		.jsonPath("$.producto.nombre").isEqualTo("Mesa comedor")
+		.jsonPath("$.producto.categoria.nombre").isEqualTo("Muebles");
+	}
+	
+	@Test
 	void crear2Test() {
 		
 		Categoria categoria = service.findCategoriaByNombre("Meubles").block();
